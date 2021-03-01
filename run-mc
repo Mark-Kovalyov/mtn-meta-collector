@@ -1,0 +1,5 @@
+#!/bin/bash
+
+mvn clean package
+
+java -ea -esa -jar target/meta-collector-*.jar $?

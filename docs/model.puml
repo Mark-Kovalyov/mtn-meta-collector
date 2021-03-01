@@ -1,0 +1,34 @@
+@startuml
+interface org.apache.jena.rdf.model.Model {
+  + getGraph()
+}
+
+interface org.apache.jena.rdf.model.InfModel extends org.apache.jena.rdf.model.Model {
+}
+
+interface org.apache.jena.ontology.OntModel extends org.apache.jena.rdf.model.InfModel {
+}
+
+interface org.apache.jena.rdf.model.ModelCon
+class org.apache.jena.enhanced.EnhGraph
+class org.apache.jena.rdf.model.impl.ModelCom
+interface org.apache.jena.graph.Graph
+interface org.apache.jena.rdf.model.Resource
+interface org.apache.jena.rdf.model.Seq
+interface org.apache.jena.rdf.model.Property
+
+interface org.apache.jena.graph.FrontsNode
+interface org.apache.jena.graph.RDFNode
+
+org.apache.jena.graph.FrontsNode <|-- org.apache.jena.graph.RDFNode
+org.apache.jena.graph.RDFNode <|-- org.apache.jena.rdf.model.Resource
+org.apache.jena.rdf.model.Resource <|-- org.apache.jena.rdf.model.Seq
+org.apache.jena.rdf.model.Resource <|-- org.apache.jena.rdf.model.Property
+
+org.apache.jena.rdf.model.ModelCon <|-- org.apache.jena.rdf.model.Model
+
+org.apache.jena.enhanced.EnhGraph <|-- org.apache.jena.rdf.model.impl.ModelCom
+
+
+@enduml
+
