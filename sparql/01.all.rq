@@ -1,0 +1,9 @@
+PREFIX file: <http://file.org#>
+PREFIX mp3: <http://mp3.org#>
+PREFIX vorbis: <http://vorbis.org#>
+PREFIX p2p: <http://p2p.org#>
+
+SELECT *
+WHERE {
+ ?subject ?predicate ?object
+}

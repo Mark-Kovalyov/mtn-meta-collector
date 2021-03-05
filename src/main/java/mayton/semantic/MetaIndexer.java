@@ -49,7 +49,7 @@ public class MetaIndexer {
         logger.info("Dataset commited");
         TDB.sync(dataset);
         logger.info("Dataset closed");
-        return metaVisitor.getCnt();
+        return metaVisitor.getMp3cnt();
     }
 
     private static void modelReport(Model model) {

@@ -1,0 +1,11 @@
+PREFIX mtn: <http://mtn.org/trivial#>
+PREFIX file: <http://file.org#>
+PREFIX mp3: <http://mp3.org#>
+PREFIX vorbis: <http://vorbis.org#>
+PREFIX p2p: <http://p2p.org#>
+
+SELECT DISTINCT ?genre
+WHERE {
+ ?id mp3:genreDesc ?genre
+}
+ORDER BY ?genre

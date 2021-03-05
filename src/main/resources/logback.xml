@@ -16,7 +16,7 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <appender name="SECURED_FILE" class="ch.qos.logback.core.FileAppender">
         <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
             <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
                 <marker>SECURED</marker>
@@ -37,6 +37,7 @@
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
+        <appender-ref ref="SECURED_FILE" />
     </root>
 
 </configuration>

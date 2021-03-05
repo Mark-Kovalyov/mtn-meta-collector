@@ -13,10 +13,11 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.lang.String.valueOf;
 import static java.util.Objects.requireNonNull;
@@ -27,9 +28,16 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
 
     private Model model;
 
+    private Set<String> extensions = new HashSet<>();
+
     private long id;
 
-    private int cnt;
+    private int mp3cnt;
+
+    private int vorbisCnt;
+
+    private int othersCnt;
+
 
     public MetaVisitor(Model model) {
         super();
@@ -58,18 +66,19 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
             logger.warn("Enter subtree {}", dirName);
             return FileVisitResult.CONTINUE;
         } else if (dirName.startsWith("/storage/music/")) {
-            if (dirName.startsWith("/storage/music/Erik_Trufazz")
-                //dirName.startsWith("/storage/music/De-Phazz") ||
-                //dirName.startsWith("/storage/music/Glen Miller") ||
-                //dirName.startsWith("/storage/music/VA - Science Fiction Jazz vol.1-12 (1996-2010)") ||
-                //dirName.startsWith("/storage/music/John Coltrane - A Love Supreme (1964) [FLAC]")
+            /*if (dirName.startsWith("/storage/music/Erik_Trufazz") ||
+                dirName.startsWith("/storage/music/De-Phazz") ||
+                dirName.startsWith("/storage/music/Glen Miller") ||
+                dirName.startsWith("/storage/music/VA - Science Fiction Jazz vol.1-12 (1996-2010)") ||
+                dirName.startsWith("/storage/music/John Coltrane - A Love Supreme (1964) [FLAC]")
                 ) {
                 logger.info("Enter subtree {}", dirName);
                 return FileVisitResult.CONTINUE;
             } else {
                 logger.warn("Skip subtree {}", dirName);
                 return FileVisitResult.SKIP_SUBTREE;
-            }
+            }*/
+            return FileVisitResult.CONTINUE;
         } else {
             return FileVisitResult.SKIP_SUBTREE;
         }
@@ -123,6 +132,8 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
         );
     }
 
+
+
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
         requireNonNull(file);
@@ -134,16 +145,19 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
             Resource idRes = model.createResource("http://file.org#id" + id);
             processFileHeader(file, idRes);
             Mp3ContentProcessor.createInstance().process(model, idRes, file, attrs, id);
-            cnt++;
+            mp3cnt++;
+            MDC.clear();
         } else if (fileName.endsWith(".ogg")) {
-            /*id++;
+            id++;
             MDC.put("id", valueOf(id));
             Resource idRes = model.createResource("http://file.org#id" + id);
             processFileHeader(file, idRes);
             VorbisContentProcessor.createInstance().process(model, idRes, file, attrs, id);
-            cnt++;*/
+            vorbisCnt++;
+            MDC.clear();
         } else {
             // Unknown file
+            othersCnt++;
         }
         return FileVisitResult.CONTINUE;
     }
@@ -169,7 +183,15 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
         return id;
     }
 
-    public int getCnt() {
-        return cnt;
+    public int getMp3cnt() {
+        return mp3cnt;
+    }
+
+    public int getVorbisCnt() {
+        return vorbisCnt;
+    }
+
+    public int getOthersCnt() {
+        return othersCnt;
     }
 }

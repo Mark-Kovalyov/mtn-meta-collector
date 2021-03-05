@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
+import static mayton.semantic.FileUtils.escapeControl;
+
 public class VorbisContentProcessor implements ContentProcessor {
 
     static Logger logger = LoggerFactory.getLogger(VorbisContentProcessor.class);
@@ -81,8 +83,6 @@ public class VorbisContentProcessor implements ContentProcessor {
     public void process(@NotNull Model model, @NotNull Resource idRes, @NotNull Path file, @NotNull BasicFileAttributes attrs, long id) throws IOException {
         VorbisFile vf = new VorbisFile(file.toFile());
         Map<String, String> tags = extractTags(vf);
-        long length = file.toFile().length();
-        String fileName = file.getFileName().toString();
         model.add(
                 idRes,
                 model.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
@@ -128,7 +128,7 @@ public class VorbisContentProcessor implements ContentProcessor {
             Iterator tagIterator = ((List) comments.get(tag)).iterator();
             while (tagIterator.hasNext()) {
                 String value = (String) tagIterator.next();
-                m.put(tag, value);
+                m.put(escapeControl(tag), escapeControl(value));
             }
         }
         return m;

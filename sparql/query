@@ -3,9 +3,10 @@
 tdbquery \
   --verbose \
   --time \
-  --loc music-2021-03-02 \
+  --loc /bigdata/semantic/tdb/music-2021-03-05 \
   --explain \
   --optimize=on \
   --results=CSV \
-  --base="http://mayton.org#" \
-  --query="SELECT * WHERE { ?a ?b ?c }"
+  --base="http://file.org#" \
+  --file=04.count-mp3-vorbis.rq > 04.count-mp3-vorbis.rq.csv
+

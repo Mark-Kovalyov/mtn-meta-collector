@@ -1,0 +1,13 @@
+PREFIX mtn: <http://mtn.org/trivial#>
+PREFIX file: <http://file.org#>
+PREFIX mp3: <http://mp3.org#>
+PREFIX vorbis: <http://vorbis.org#>
+PREFIX p2p: <http://p2p.org#>
+
+# Count and group all files by extension (mpeg/vorbis)
+
+SELECT ?mimetype (COUNT(*) as ?cnt)
+WHERE {
+    ?id a ?mimetype .
+}
+GROUP BY ?mimetype
