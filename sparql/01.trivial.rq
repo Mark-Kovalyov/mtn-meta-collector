@@ -1,0 +1,6 @@
+PREFIX mtn: <http://mtn.org/trivial#>
+
+SELECT *
+WHERE {
+ ?subject, ?predicate, ?object
+}

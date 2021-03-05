@@ -46,11 +46,11 @@
       </dependency>
 
 
-      <dependency>
+      <!--<dependency>
           <groupId>org.apache.jena</groupId>
           <artifactId>jena-tdb2</artifactId>
           <version>3.12.0</version>
-      </dependency>
+      </dependency>-->
 
       <!-- Mp3 tag extractor (Apache Tika, mp3agic)-->
 
@@ -101,9 +101,25 @@
   </dependencies>
 
     <build>
-
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>mayton.semantic.MetaIndexer</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
+    <!--<build>
+        <plugins>
            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -144,6 +160,6 @@
                 </executions>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
 </project>

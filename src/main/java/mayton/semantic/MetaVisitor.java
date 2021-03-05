@@ -29,6 +29,8 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
 
     private long id;
 
+    private int cnt;
+
     public MetaVisitor(Model model) {
         super();
 
@@ -53,14 +55,15 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
         requireNonNull(attrs);
         String dirName = dir.toString();
         if (dirName.equals("/storage/music")) {
-            logger.info("Enter subtree {}", dirName);
+            logger.warn("Enter subtree {}", dirName);
             return FileVisitResult.CONTINUE;
         } else if (dirName.startsWith("/storage/music/")) {
-            if (dirName.startsWith("/storage/music/Erik_Trufazz") ||
-                dirName.startsWith("/storage/music/De-Phazz") ||
-                dirName.startsWith("/storage/music/Glen Miller") ||
+            if (dirName.startsWith("/storage/music/Erik_Trufazz")
+                //dirName.startsWith("/storage/music/De-Phazz") ||
+                //dirName.startsWith("/storage/music/Glen Miller") ||
                 //dirName.startsWith("/storage/music/VA - Science Fiction Jazz vol.1-12 (1996-2010)") ||
-                dirName.startsWith("/storage/music/John Coltrane - A Love Supreme (1964) [FLAC]")) {
+                //dirName.startsWith("/storage/music/John Coltrane - A Love Supreme (1964) [FLAC]")
+                ) {
                 logger.info("Enter subtree {}", dirName);
                 return FileVisitResult.CONTINUE;
             } else {
@@ -125,19 +128,23 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
         requireNonNull(file);
         requireNonNull(attrs);
         String fileName = file.getFileName().toString();
-        MDC.put("id", String.valueOf(id));
-        Resource idRes = model.createResource("http://file.org#id" + id);
         if (fileName.endsWith(".mp3")) {
+            id++;
+            MDC.put("id", valueOf(id));
+            Resource idRes = model.createResource("http://file.org#id" + id);
             processFileHeader(file, idRes);
             Mp3ContentProcessor.createInstance().process(model, idRes, file, attrs, id);
-            id++;
+            cnt++;
         } else if (fileName.endsWith(".ogg")) {
+            id++;
+            MDC.put("id", valueOf(id));
+            Resource idRes = model.createResource("http://file.org#id" + id);
             processFileHeader(file, idRes);
             VorbisContentProcessor.createInstance().process(model, idRes, file, attrs, id);
-            id++;
+            cnt++;
+        } else {
+            // Unknown file
         }
-        //processFileHeader(file, idRes);
-        //id++;
         return FileVisitResult.CONTINUE;
     }
 
@@ -156,5 +163,13 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
 
     public Model getModel() {
         return model;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public int getCnt() {
+        return cnt;
     }
 }

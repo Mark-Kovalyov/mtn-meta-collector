@@ -1,5 +1,21 @@
 #!/bin/bash
 
-mvn clean package
+cdate=$(date +"%Y-%m-%d")
 
-java -ea -esa -jar target/meta-collector-*.jar $?
+rm -f ./bin/*
+
+mvn clean package && \
+ mvn install dependency:copy-dependencies && \
+ cp -f target/meta-collector-*.jar ./bin && \
+ cp -f target/dependency/* ./bin
+
+echo "Compillation status = $?"
+
+java -jar bin/meta-collector-*.jar \
+  /storage/music \
+  /bigdata/semantic/music-$cdate.ttl \
+  /bigdata/semantic/music-$cdate.xml \
+  /bigdata/semantic/tdb/music-$cdate
+
+gzip -k -f /bigdata/semantic/music-$cdate.ttl.gz /bigdata/semantic/music-$cdate.ttl
+gzip -k -f /bigdata/semantic/music-$cdate.xml.gz /bigdata/semantic/music-$cdate.xml

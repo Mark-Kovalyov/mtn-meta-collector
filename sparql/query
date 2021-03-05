@@ -1,0 +1,11 @@
+#!/bin/bash
+
+tdbquery \
+  --verbose \
+  --time \
+  --loc music-2021-03-02 \
+  --explain \
+  --optimize=on \
+  --results=CSV \
+  --base="http://mayton.org#" \
+  --query="SELECT * WHERE { ?a ?b ?c }"

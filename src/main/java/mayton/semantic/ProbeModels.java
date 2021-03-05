@@ -1,21 +1,22 @@
 package mayton.semantic;
 
-import org.apache.jena.ontology.OntModel;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.tdb.TDB;
+import org.apache.jena.tdb.TDBFactory;
 
 public class ProbeModels {
 
     public static void main(String[] args) {
 
-        Model schema = ModelFactory.createDefaultModel();
-        Model model = ModelFactory.createDefaultModel();
-        InfModel rdfsModel = ModelFactory.createRDFSModel(schema, model);
+        Dataset dataset = TDBFactory.createDataset("/bigdata/tdb/music");
+        dataset.begin(ReadWrite.WRITE);
+        Model model = dataset.getDefaultModel() ;
+        model.commit();
+        dataset.end() ;
 
-        Seq seq;
-
-        Resource resource;
-
-        OntModel ontModel = ModelFactory.createOntologyModel();
+        TDB.sync(dataset);
 
     }
 

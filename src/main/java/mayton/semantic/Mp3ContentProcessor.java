@@ -38,6 +38,7 @@ public class Mp3ContentProcessor implements ContentProcessor {
         return instance;
     }
 
+    // Overall : 20943 mp3 files
     public void process(@NotNull Model model, @NotNull Resource idRes, @NotNull Path file,@NotNull BasicFileAttributes attrs, long id) throws IOException {
         try {
             long length = file.toFile().length();
@@ -47,10 +48,7 @@ public class Mp3ContentProcessor implements ContentProcessor {
                     model.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
                     "/audio/mpeg"
             );
-            long t0 = currentTimeMillis();
             Mp3File mp3file = new Mp3File(file);
-            long t1 = currentTimeMillis();
-
             long lengthInSeconds = mp3file.getLengthInSeconds();
             logger.debug(" Length of this mp3 is: {} seconds", lengthInSeconds);
             model.add(idRes,
@@ -76,7 +74,6 @@ public class Mp3ContentProcessor implements ContentProcessor {
             boolean hasId3v1Tag = mp3file.hasId3v1Tag();
             model.addLiteral(idRes, model.createProperty("http://mp3.org#hasId3v1Tag"), hasId3v1Tag);
             logger.debug(" Has ID3v1 tag?: " + (hasId3v1Tag ? "YES" : "NO"));
-            long t1_1 = currentTimeMillis();
             if (hasId3v1Tag) {
                 ID3v1 id3v1Tag = mp3file.getId3v1Tag();
                 String track = id3v1Tag.getTrack();
@@ -98,8 +95,6 @@ public class Mp3ContentProcessor implements ContentProcessor {
                 if (!StringUtils.isBlank(title)) {
                     model.add(idRes, model.createProperty("http://mp3.org#Title"), title, XSDDatatype.XSDstring);
                 }
-
-
                 String album = id3v1Tag.getAlbum();
                 logger.debug("  Album: {}", album);
                 if (!StringUtils.isBlank(album)) {
@@ -107,21 +102,27 @@ public class Mp3ContentProcessor implements ContentProcessor {
                 }
 
                 String year = id3v1Tag.getYear();
-                logger.debug("  Year: {}", year);
-                int yearInt = Integer.parseInt(year);
-                if (yearInt < 100) {
-                    yearInt += 1900;
-                } else {
-                    if (XSDDatatype.XSDdate.isValid(year)) {
-                        model.add(idRes,
-                                model.createProperty("http://mp3.org#Year"),
-                                year,
-                                XSDDatatype.XSDdate);
-                    } else {
-                        logger.warn("Unable to apply {} to XSDDatatype.XSDdate format", year);
+                logger.debug("  Year: '{}'", year);
+                if (!StringUtils.isBlank(year)) {
+                    try {
+                        int yearInt = Integer.parseInt(year);
+                        if (yearInt < 100) {
+                            yearInt += 1900;
+                            logger.warn("year {} less than 1900", yearInt);
+                        } else {
+                            if (XSDDatatype.XSDdate.isValid(year + "-01-01")) {
+                                model.add(idRes,
+                                        model.createProperty("http://mp3.org#Year"),
+                                        year,
+                                        XSDDatatype.XSDdate);
+                            } else {
+                                logger.warn("Unable to apply {} to XSDDatatype.XSDdate format", year + "-01-01");
+                            }
+                        }
+                    } catch (NumberFormatException ex) {
+                        logger.warn("Unable to parse '" + year + "' as integer", ex);
                     }
                 }
-
 
 
                 logger.debug("  Genre: " + id3v1Tag.getGenre() + " (" + id3v1Tag.getGenreDescription() + ")");
@@ -131,7 +132,6 @@ public class Mp3ContentProcessor implements ContentProcessor {
                     model.addLiteral(idRes, model.createProperty("http://mp3.org#Comment"), comment);
                 }
             }
-            long t1_2 = currentTimeMillis();
                 /*logger.debug("Has ID3v2 tag?: " + (mp3file.hasId3v2Tag() ? "YES" : "NO"));
                 logger.debug("Has custom tag?: " + (mp3file.hasCustomTag() ? "YES" : "NO"));
                 if (mp3file.hasId3v2Tag()) {
@@ -152,9 +152,6 @@ public class Mp3ContentProcessor implements ContentProcessor {
                     logger.debug("URL: " + id3v2Tag.getUrl());
                     logger.debug("Encoder: " + id3v2Tag.getEncoder());
                 }*/
-            long t2_10 = currentTimeMillis();
-
-            long t2 = currentTimeMillis();
         } catch (UnsupportedTagException e) {
             logger.error("UnsupportedTagException",e);
         } catch (InvalidDataException e) {
