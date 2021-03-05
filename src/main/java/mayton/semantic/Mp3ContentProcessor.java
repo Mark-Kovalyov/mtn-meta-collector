@@ -20,6 +20,7 @@ import java.time.LocalDate;
 
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class Mp3ContentProcessor implements ContentProcessor {
 
@@ -41,8 +42,6 @@ public class Mp3ContentProcessor implements ContentProcessor {
     // Overall : 20943 mp3 files
     public void process(@NotNull Model model, @NotNull Resource idRes, @NotNull Path file,@NotNull BasicFileAttributes attrs, long id) throws IOException {
         try {
-            long length = file.toFile().length();
-            String fileName = file.getFileName().toString();
             model.add(
                     idRes,
                     model.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"),
@@ -73,37 +72,39 @@ public class Mp3ContentProcessor implements ContentProcessor {
                     XSDDatatype.XSDinteger);
             boolean hasId3v1Tag = mp3file.hasId3v1Tag();
             model.addLiteral(idRes, model.createProperty("http://mp3.org#hasId3v1Tag"), hasId3v1Tag);
-            logger.debug(" Has ID3v1 tag?: " + (hasId3v1Tag ? "YES" : "NO"));
+            logger.debug(" Has ID3v1 tag?: {}", hasId3v1Tag);
             if (hasId3v1Tag) {
                 ID3v1 id3v1Tag = mp3file.getId3v1Tag();
                 String track = id3v1Tag.getTrack();
-                if (!StringUtils.isBlank(track)) {
+                if (!isBlank(track)) {
                     model.add(idRes,
                             model.createProperty("http://mp3.org#Track"),
                             track,
                             XSDDatatype.XSDinteger);
                 }
                 String artist = id3v1Tag.getArtist();
-                logger.debug("  Artist: {}", artist);
-                model.add(idRes,
-                        model.createProperty("http://mp3.org#Artist"),
-                        artist,
-                        XSDDatatype.XSDstring);
+                if (!isBlank(artist)) {
+                    logger.debug("  Artist: {}", artist);
+                    model.add(idRes,
+                            model.createProperty("http://mp3.org#Artist"),
+                            artist,
+                            XSDDatatype.XSDstring);
+                }
 
                 String title = id3v1Tag.getTitle();
                 logger.debug("  Title: {}", title);
-                if (!StringUtils.isBlank(title)) {
+                if (!isBlank(title)) {
                     model.add(idRes, model.createProperty("http://mp3.org#Title"), title, XSDDatatype.XSDstring);
                 }
                 String album = id3v1Tag.getAlbum();
                 logger.debug("  Album: {}", album);
-                if (!StringUtils.isBlank(album)) {
+                if (!isBlank(album)) {
                     model.add(idRes, model.createProperty("http://mp3.org#Album"), album, XSDDatatype.XSDstring);
                 }
 
                 String year = id3v1Tag.getYear();
                 logger.debug("  Year: '{}'", year);
-                if (!StringUtils.isBlank(year)) {
+                if (!isBlank(year)) {
                     try {
                         int yearInt = Integer.parseInt(year);
                         if (yearInt < 100) {
@@ -123,16 +124,32 @@ public class Mp3ContentProcessor implements ContentProcessor {
                         logger.warn("Unable to parse '" + year + "' as integer", ex);
                     }
                 }
+                int genre = id3v1Tag.getGenre();
+                String genreDesc = id3v1Tag.getGenreDescription();
 
+                logger.debug("  Genre: {} ({})", genre, genreDesc);
+                model.add(idRes, model.createProperty("http://mp3.org#genre"), valueOf(genre), XSDDatatype.XSDinteger);
 
-                logger.debug("  Genre: " + id3v1Tag.getGenre() + " (" + id3v1Tag.getGenreDescription() + ")");
+                if (!isBlank(genreDesc)) {
+                    model.add(idRes, model.createProperty("http://mp3.org#genreDesc"), genreDesc, XSDDatatype.XSDstring);
+                }
+
                 String comment = id3v1Tag.getComment();
-                if (!StringUtils.isBlank(comment)) {
-                    logger.debug("  Comment: " + comment);
-                    model.addLiteral(idRes, model.createProperty("http://mp3.org#Comment"), comment);
+                if (!isBlank(comment)) {
+                    logger.debug("  Comment: {}", comment);
+                    model.add(idRes, model.createProperty("http://mp3.org#Comment"), comment, XSDDatatype.XSDstring);
                 }
             }
-                /*logger.debug("Has ID3v2 tag?: " + (mp3file.hasId3v2Tag() ? "YES" : "NO"));
+        } catch (UnsupportedTagException e) {
+            logger.error("UnsupportedTagException",e);
+        } catch (InvalidDataException e) {
+            logger.error("InvalidDataException",e);
+        } catch (IllegalArgumentException e) {
+            logger.error("Illegal argument exception", e);
+        }
+    }
+
+                    /*logger.debug("Has ID3v2 tag?: " + (mp3file.hasId3v2Tag() ? "YES" : "NO"));
                 logger.debug("Has custom tag?: " + (mp3file.hasCustomTag() ? "YES" : "NO"));
                 if (mp3file.hasId3v2Tag()) {
                     ID3v2 id3v2Tag = mp3file.getId3v2Tag();
@@ -152,13 +169,5 @@ public class Mp3ContentProcessor implements ContentProcessor {
                     logger.debug("URL: " + id3v2Tag.getUrl());
                     logger.debug("Encoder: " + id3v2Tag.getEncoder());
                 }*/
-        } catch (UnsupportedTagException e) {
-            logger.error("UnsupportedTagException",e);
-        } catch (InvalidDataException e) {
-            logger.error("InvalidDataException",e);
-        } catch (IllegalArgumentException e) {
-            logger.error("Illegal argument exception", e);
-        }
-    }
 
 }

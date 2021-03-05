@@ -17,7 +17,14 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/tdbquery.log</file>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator class="ch.qos.logback.classic.boolex.OnMarkerEvaluator">
+                <marker>SECURED</marker>
+            </evaluator>
+            <OnMatch>ACCEPT</OnMatch>
+            <OnMissmatch>DENY</OnMissmatch>
+        </filter>
+        <file>logs/secured.log</file>
         <append>false</append>
         <encoder>
             <pattern>%d{yyy-MM-dd HH:mm:ss.SSS} : [%-5level] : %class{0} : id = %X{id} : %msg%n</pattern>

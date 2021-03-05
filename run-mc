@@ -17,5 +17,3 @@ java -jar bin/meta-collector-*.jar \
   /bigdata/semantic/music-$cdate.xml \
   /bigdata/semantic/tdb/music-$cdate
 
-gzip -k -f /bigdata/semantic/music-$cdate.ttl.gz /bigdata/semantic/music-$cdate.ttl
-gzip -k -f /bigdata/semantic/music-$cdate.xml.gz /bigdata/semantic/music-$cdate.xml

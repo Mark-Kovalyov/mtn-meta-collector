@@ -136,12 +136,12 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
             Mp3ContentProcessor.createInstance().process(model, idRes, file, attrs, id);
             cnt++;
         } else if (fileName.endsWith(".ogg")) {
-            id++;
+            /*id++;
             MDC.put("id", valueOf(id));
             Resource idRes = model.createResource("http://file.org#id" + id);
             processFileHeader(file, idRes);
             VorbisContentProcessor.createInstance().process(model, idRes, file, attrs, id);
-            cnt++;
+            cnt++;*/
         } else {
             // Unknown file
         }

@@ -10,6 +10,8 @@ import org.apache.jena.tdb.TDB;
 import org.apache.jena.tdb.TDBFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -21,6 +23,8 @@ import static java.util.Objects.requireNonNull;
 public class MetaIndexer {
 
     static Logger logger = LoggerFactory.getLogger(MetaIndexer.class);
+
+    static final Marker SECURED_MARKER = MarkerFactory.getMarker("SECURED");
 
     public static void write() {
         String directory = "/bigdata/semantic-meta";
@@ -60,26 +64,27 @@ public class MetaIndexer {
     }
 
     public static void exportToFiles(Model model, String ttlOutputFile, String xmlOutputFile) {
-        try(OutputStream outputStream = new FileOutputStream(ttlOutputFile)) {
+        try(OutputStream outputStream = new FileOutputStream(ttlOutputFile);
+            OutputStream xmlOutputStream = new FileOutputStream(xmlOutputFile)) {
             requireNonNull(model);
             requireNonNull(model.getGraph());
             requireNonNull(outputStream);
 
-            logger.info("Checkpoint [1]");
+            logger.info(SECURED_MARKER, "Checkpoint [1]");
 
             RDFDataMgr.write(
                     outputStream,
                     model,
                     RDFFormat.TURTLE);
 
-            logger.info("Checkpoint [2]");
+            logger.info(SECURED_MARKER, "Checkpoint [2]");
 
             RDFDataMgr.write(
-                    outputStream,
+                    xmlOutputStream,
                     model,
                     RDFFormat.RDFXML);
 
-            logger.info("Checkpoint [3]");
+            logger.info(SECURED_MARKER, "Checkpoint [3]");
         } catch (IOException ex) {
             logger.error("IOException", ex);
         }
