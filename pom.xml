@@ -20,9 +20,15 @@
     <profiles>
         <profile>
             <id>media</id>
+            <properties>
+                <jarName>media-meta-collector</jarName>
+            </properties>
         </profile>
         <profile>
             <id>docs</id>
+            <properties>
+                <jarName>docs-meta-collector</jarName>
+            </properties>
         </profile>
     </profiles>
 
@@ -131,6 +137,7 @@
                             <mainClass>mayton.semantic.media.MediaMetaIndexer</mainClass>
                         </manifest>
                     </archive>
+                    <finalName>${jarName}</finalName>
                 </configuration>
             </plugin>
         </plugins>

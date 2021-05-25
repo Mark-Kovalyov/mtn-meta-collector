@@ -50,25 +50,16 @@ public class P2PLinkProcessor {
             int size = 0;
             sha1digest.reset();
             md4digest.reset();
-            crc32.reset();
             while ((size = is.read(buf)) >= 0) {
                 sha1digest.update(buf, 0, size);
                 md4digest.update(buf, 0, size);
                 md5digest.update(buf, 0, size);
-                crc32.update(buf, 0, size);
             }
             String md4string  = Base64.encodeBase64String(md4digest.digest());
             String sha1string = Hex.encodeHexString(sha1digest.digest());
             String md5string  = Hex.encodeHexString(md5digest.digest());
-            byte[] arr = {0,1,2,3,4,5,6,7};
-            String tth        = (new Base32()).encodeAsString(arr);
 
-            P2PLinks res = new P2PLinks(
-                    format("ed2k://|file|%s|%d|%s|/", file.getName(), file.length(), md4string),
-                    format("xt=urn:tree:tiger:%s", tth),
-                    format("xt=urn:btih:%s", sha1string),
-                    format("xt=urn:md5:%s", md5string),
-                    format("%08X", crc32.getValue()));
+            P2PLinks res = new P2PLinks(md4string, md5string, sha1string, "", "");
 
             logger.debug("{}", res);
             return res;

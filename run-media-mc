@@ -1,16 +1,11 @@
-#!/bin/bash
+#!/bin/bash -e
 
 cdate=$(date +"%Y-%m-%d-%H-%M-%S")
 
 mvn clean package -P media
 mvn install dependency:copy-dependencies -P media
-cp -f target/media-meta-collector-*.jar ./bin
-rsync target/dependency/* ./bin --delete
-
-mvn clean package -P docs
-mvn install dependency:copy-dependencies -P docs
-cp -f target/docs-meta-collector-*.jar ./bin
-rsync target/dependency/* ./bin
+cp -f target/media-meta-collector.jar ./bin
+rsync target/dependency/* ./bin -d -r
 
 echo "Compillation status = $?"
 

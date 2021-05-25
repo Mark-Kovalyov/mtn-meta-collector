@@ -5,28 +5,29 @@ package mayton.semantic.media;
  */
 public final class P2PLinks {
 
-    public final String ed2k;
-    public final String tigerTreeHash; // xt=urn:tree:tiger:[ TTH хеш  файла (Base32) ]
-    public final String bitTorrentInfoHash; // xt=urn:btih:[HEX]
-    public final String gnutella2;   //   xt=urn:md5:[Hex] (Gnutella2)
-    public final String crc32; //  xt=urn:crc32:[Base10]
+    public final String md4;
+    public final String md5;
+    public final String sha1;
+    public final String tth;
+    public final String aich;
 
-    public P2PLinks(String ed2k, String tigerTreeHash, String bitTorrentInfoHash, String gnutella2, String crc32) {
-        this.ed2k = ed2k;
-        this.tigerTreeHash = tigerTreeHash;
-        this.bitTorrentInfoHash = bitTorrentInfoHash;
-        this.gnutella2 = gnutella2;
-        this.crc32 = crc32;
+
+    public P2PLinks(String md4, String md5, String sha1, String tth, String aich) {
+        this.md4 = md4;
+        this.md5 = md5;
+        this.sha1 = sha1;
+        this.tth = tth;
+        this.aich = aich;
     }
 
     @Override
     public String toString() {
         return "P2PLinks{" +
-                "ed2k='" + ed2k + '\'' +
-                ", tigerTreeHash='" + tigerTreeHash + '\'' +
-                ", bitTorrentInfoHash='" + bitTorrentInfoHash + '\'' +
-                ", md5='" + gnutella2 + '\'' +
-                ", crc32='" + crc32 + '\'' +
+                "md4='" + md4 + '\'' +
+                ", md5='" + md5 + '\'' +
+                ", sha1='" + sha1 + '\'' +
+                ", tth='" + tth + '\'' +
+                ", aich='" + aich + '\'' +
                 '}';
     }
 }

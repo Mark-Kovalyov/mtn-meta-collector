@@ -121,7 +121,7 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
         );
         P2PLinks p2PLinks = P2PLinkProcessor.createInstance().extractP2Plinks(file.toFile());
         if (length < 9728000) {
-            String ed2k = p2PLinks.ed2k;
+            String ed2k = "?";
             model.add(
                     idRes,
                     model.createProperty("http://p2p.org#ed2k"),
@@ -129,24 +129,7 @@ public class MetaVisitor extends SimpleFileVisitor<Path> {
                     XSDDatatype.XSDstring
             );
         }
-        model.add(
-                idRes,
-                model.createProperty("http://p2p.org#crc32"),
-                p2PLinks.crc32,
-                XSDDatatype.XSDstring
-        );
-        model.add(
-                idRes,
-                model.createProperty("http://p2p.org#gnutella2"),
-                p2PLinks.gnutella2,
-                XSDDatatype.XSDstring
-        );
-        model.add(
-                idRes,
-                model.createProperty("http://p2p.org#btih"),
-                p2PLinks.bitTorrentInfoHash,
-                XSDDatatype.XSDstring
-        );
+
     }
 
 
