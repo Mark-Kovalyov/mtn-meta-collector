@@ -1,0 +1,21 @@
+#!/bin/bash
+
+cdate=$(date +"%Y-%m-%d-%H-%M-%S")
+
+mvn clean package -P media
+mvn install dependency:copy-dependencies -P media
+cp -f target/media-meta-collector-*.jar ./bin
+rsync target/dependency/* ./bin --delete
+
+mvn clean package -P docs
+mvn install dependency:copy-dependencies -P docs
+cp -f target/docs-meta-collector-*.jar ./bin
+rsync target/dependency/* ./bin
+
+echo "Compillation status = $?"
+
+java -jar bin/meta-collector-*.jar \
+  /storage/music \
+  /bigdata/semantic/ttl/music-$cdate.ttl \
+  /bigdata/semantic/xml/music-$cdate.xml \
+  /bigdata/semantic/tdb/music-$cdate

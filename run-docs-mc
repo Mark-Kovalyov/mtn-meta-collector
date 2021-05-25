@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cdate=$(date +"%Y-%m-%d-%H-%M-%S")
+
+java -jar bin/meta-collector-*.jar \
+  /storage/music \
+  /bigdata/semantic/ttl/music-$cdate.ttl \
+  /bigdata/semantic/xml/music-$cdate.xml \
+  /bigdata/semantic/tdb/music-$cdate

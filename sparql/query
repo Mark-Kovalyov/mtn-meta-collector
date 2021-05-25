@@ -1,6 +1,7 @@
 #!/bin/bash
 
-tdbquery \
+for i in *.rq; do
+ tdbquery \
   --verbose \
   --time \
   --loc /bigdata/semantic/tdb/music-2021-03-05 \
@@ -8,5 +9,5 @@ tdbquery \
   --optimize=on \
   --results=CSV \
   --base="http://file.org#" \
-  --file=04.count-mp3-vorbis.rq > 04.count-mp3-vorbis.rq.csv
-
+  --file="$i" | tr -d '\r' > "$i.csv"
+done;
